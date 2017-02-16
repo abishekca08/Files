@@ -15,20 +15,18 @@ import java.util.TreeMap;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
-import javafx.scene.chart.PieChart.Data;
+import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
@@ -95,8 +93,10 @@ public class JavaFxChartFromExcel extends Application {
 		System.out.println("(1)Area Chart");
 		System.out.println("(2)Bar Chart");
 		System.out.println("(3)Pie Chart");
+		System.out.println("(4)Scatter Chart");
 		System.out.println();
 		System.out.println("Enter chart type :");
+		@SuppressWarnings("resource")
 		Scanner sc=new Scanner(System.in);
 		chrt_type=sc.nextInt();
 		Group root;
@@ -171,6 +171,30 @@ public class JavaFxChartFromExcel extends Application {
 			//stage.show();
 			saveAsPngPie(pieChart,"D:\\Files\\CJK\\Task\\chart.png");
 			break;
+		case 4:
+			xAxis = new CategoryAxis();
+			xAxis.setCategories(FXCollections.<String> observableArrayList(keyList));
+			xAxis.setLabel("Ticket ID");
+			yAxis = new NumberAxis(0, 1000, 50);
+			yAxis.setLabel("Bug Count");
+			ScatterChart scaChart = new ScatterChart(xAxis, yAxis);
+			XYChart.Series<String, Number> series2 = new XYChart.Series<String, Number>();
+			series2.setName("No of Bugs");
+			while (i.hasNext()) {
+				Map.Entry me = (Map.Entry) i.next();
+				series2.getData().add(
+						new XYChart.Data((String) me.getKey(), Integer.parseInt((String) me.getValue())));
+			}
+			scaChart.getData().add(series2);
+			root = new Group(scaChart);
+			scene = new Scene(root, 600, 400);
+			scaChart.setAnimated(false);
+			stage.setTitle("Line Chart");
+			stage.setScene(scene);
+			//scene.getStylesheets().add("chart.css");
+			//stage.show();
+			saveAsPngScat(scaChart,"D:\\Files\\CJK\\Task\\chart.png");
+			break;
 		default: System.out.println("Please Enter the chart type correctly");
 				System.exit(0);
 		}
@@ -197,8 +221,9 @@ public class JavaFxChartFromExcel extends Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		writeToFile(13,2);
+		writeToFile(12,2);
 	}
+	@SuppressWarnings("rawtypes")
 	public void saveAsPngBar(BarChart linechart,String path) throws IOException{
 		WritableImage image =linechart.snapshot(new SnapshotParameters(),null);
 		File file= new File(path);
@@ -208,6 +233,17 @@ public class JavaFxChartFromExcel extends Application {
 			e.printStackTrace();
 		}
 		writeToFile(3,25);
+	}
+	@SuppressWarnings("rawtypes")
+	public void saveAsPngScat(ScatterChart linechart,String path) throws IOException{
+		WritableImage image =linechart.snapshot(new SnapshotParameters(),null);
+		File file= new File(path);
+		try {
+			ImageIO.write(SwingFXUtils.fromFXImage(image,null),"png",file);		
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		writeToFile(12,25);
 	}
 	public void writeToFile(int col,int row) throws IOException{
 		fis = new FileInputStream(new File("D:\\Files\\CJK\\Task\\BugSheet.xlsx"));
@@ -236,6 +272,7 @@ public class JavaFxChartFromExcel extends Application {
 		FileOutputStream fileOut = new FileOutputStream(file);
 		workBook.write(fileOut);
 		fileOut.close();
+		System.out.println("Chart generated successfully in the Sheet");
 	}
 
 	public static void main(String args[]) throws IOException {
