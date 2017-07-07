@@ -32,6 +32,15 @@ Total Sick leaves taken - 2.5
 
 Total Casual leaves - 13
 Total Sick leaves - 6	
+<?xml version = "1.0" encoding = "UTF-8"?>
 
-On hand casual leave - 9
-On hand sick leave - 3.5
+<beans xmlns = "http://www.springframework.org/schema/beans"
+   xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation = "http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+   <bean id = "helloWorld" class = "com.tutorialspoint.HelloWorld">
+      <property name = "message" value = "Hello World!"/>
+   </bean>
+
+</beans>
